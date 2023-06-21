@@ -71,12 +71,14 @@ RUN no_proxy=$no_proxy wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-P
 
 ARG DPCPP_VER
 ARG MKL_VER
-
-# Install standalone components instead of runtime libs
+# intel-oneapi-compiler-shared-common provides `sycl-ls`
+ARG CMPLR_COMMON_VER
+# Install runtime libs to reduce image size
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
-    intel-oneapi-dpcpp-cpp-${DPCPP_VER} \
-    intel-oneapi-mkl-${MKL_VER}
+    intel-oneapi-runtime-dpcpp-cpp=${DPCPP_VER} \
+    intel-oneapi-runtime-mkl=${MKL_VER} \
+    intel-oneapi-compiler-shared-common-${CMPLR_COMMON_VER}
 
 ARG PYTHON
 
@@ -94,14 +96,6 @@ RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python3
 
-RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
-    unzip 2023.1-linux-hotfix.zip && \
-    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/oneapi/compiler/2023.1.0/linux/lib/
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends --fix-missing \
-    libgl1 libglib2.0-0
-
 ARG TORCH_VERSION
 ARG TORCHVISION_VERSION
 ARG IPEX_VERSION
@@ -111,10 +105,22 @@ RUN --mount=type=cache,target=/root/.cache/pip \
                 intel_extension_for_pytorch==${IPEX_VERSION} \
                 torchvision==${TORCHVISION_VERSION} -f ${IPEX_WHL_URL}
 
+RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
+    unzip 2023.1-linux-hotfix.zip && \
+    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/oneapi/lib/libpi_level_zero.so && \
+    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/opencl/libpi_level_zero.so
+
+ENV PATH=/opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/intel/oneapi/lib:/opt/intel/oneapi/lib/intel64:$LD_LIBRARY_PATH
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing \
+    libgl1 libglib2.0-0
+
 COPY requirements.txt /tmp/
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r /tmp/requirements.txt
 
 COPY startup.sh /bin/
 
-CMD [ "startup.sh", "--use-intel-oneapi", "--server-name=0.0.0.0" ]
+ENTRYPOINT [ "startup.sh", "--use-intel-oneapi", "--server-name=0.0.0.0" ]
