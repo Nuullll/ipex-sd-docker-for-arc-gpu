@@ -16,16 +16,6 @@ ARG UBUNTU_VERSION
 
 FROM ubuntu:${UBUNTU_VERSION}
 
-VOLUME [ "/sd-webui" ]
-WORKDIR /sd-webui
-
-ENV LANG=C.UTF-8
-
-ARG DEBIAN_FRONTEND=noninteractive
-
-HEALTHCHECK NONE
-RUN useradd -d /home/ipex -m -s /bin/bash ipex
-
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     apt-utils \
@@ -43,27 +33,22 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
-ARG DEVICE
-
-RUN no_proxy=$no_proxy wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | \
-    gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
-RUN printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy %s\n' "$DEVICE" | \
-    tee  /etc/apt/sources.list.d/intel.gpu.jammy.list
-
-ARG ICD_VER
-ARG LEVEL_ZERO_GPU_VER
-ARG LEVEL_ZERO_VER
-ARG LEVEL_ZERO_DEV_VER
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends --fix-missing \
-    intel-opencl-icd=${ICD_VER} \
-    intel-level-zero-gpu=${LEVEL_ZERO_GPU_VER} \
-    level-zero=${LEVEL_ZERO_VER} \
-    level-zero-dev=${LEVEL_ZERO_DEV_VER} && \
+ARG PYTHON
+RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
+    ${PYTHON} lib${PYTHON} python3-pip && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
+RUN pip --no-cache-dir install --upgrade \
+    pip \
+    setuptools
+
+RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
+    ln -sf $(which ${PYTHON}) /usr/local/bin/python3 && \
+    ln -sf $(which ${PYTHON}) /usr/bin/python && \
+    ln -sf $(which ${PYTHON}) /usr/bin/python3
+
+# oneAPI packages
 RUN no_proxy=$no_proxy wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
    | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null && \
    echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
@@ -80,22 +65,18 @@ RUN apt-get update && \
     intel-oneapi-runtime-mkl=${MKL_VER} \
     intel-oneapi-compiler-shared-common-${CMPLR_COMMON_VER}
 
-ARG PYTHON
+# oneAPI 2023.1 hostfix
+RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
+    unzip 2023.1-linux-hotfix.zip && \
+    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/oneapi/lib/libpi_level_zero.so && \
+    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/opencl/libpi_level_zero.so && \
+    rm -rf 2023.1-linux-hotfix.zip 2023.1-linux-hotfix/
 
-RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
-    ${PYTHON} lib${PYTHON} python3-pip python3-venv && \
-    apt-get clean && \
-    rm -rf  /var/lib/apt/lists/*
+# Set oneAPI lib env
+ENV PATH=/opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin:$PATH
+ENV LD_LIBRARY_PATH=/opt/intel/oneapi/lib:/opt/intel/oneapi/lib/intel64:$LD_LIBRARY_PATH
 
-RUN pip --no-cache-dir install --upgrade \
-    pip \
-    setuptools
-
-RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
-    ln -sf $(which ${PYTHON}) /usr/local/bin/python3 && \
-    ln -sf $(which ${PYTHON}) /usr/bin/python && \
-    ln -sf $(which ${PYTHON}) /usr/bin/python3
-
+# IPEX
 ARG TORCH_VERSION
 ARG TORCHVISION_VERSION
 ARG IPEX_VERSION
@@ -105,22 +86,41 @@ RUN --mount=type=cache,target=/root/.cache/pip \
                 intel_extension_for_pytorch==${IPEX_VERSION} \
                 torchvision==${TORCHVISION_VERSION} -f ${IPEX_WHL_URL}
 
-RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
-    unzip 2023.1-linux-hotfix.zip && \
-    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/oneapi/lib/libpi_level_zero.so && \
-    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/opencl/libpi_level_zero.so
+# Intel Graphics driver
+ARG DEVICE
+RUN no_proxy=$no_proxy wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | \
+    gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+RUN printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy %s\n' "$DEVICE" | \
+    tee /etc/apt/sources.list.d/intel.gpu.jammy.list
 
-ENV PATH=/opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/intel/oneapi/lib:/opt/intel/oneapi/lib/intel64:$LD_LIBRARY_PATH
-
+ARG ICD_VER
+ARG LEVEL_ZERO_GPU_VER
+ARG LEVEL_ZERO_VER
+ARG LEVEL_ZERO_DEV_VER
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
-    libgl1 libglib2.0-0
+    intel-opencl-icd=${ICD_VER} \
+    intel-level-zero-gpu=${LEVEL_ZERO_GPU_VER} \
+    level-zero=${LEVEL_ZERO_VER} \
+    level-zero-dev=${LEVEL_ZERO_DEV_VER} && \
+    apt-get clean && \
+    rm -rf  /var/lib/apt/lists/*
 
-COPY requirements.txt /tmp/
+# Stable Diffusion Web UI dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing \
+    libgl1 libglib2.0-0 && \
+    apt-get clean && \
+    rm -rf  /var/lib/apt/lists/*
+
+ARG SDWEBUI_DEPS=https://raw.githubusercontent.com/jbaboval/stable-diffusion-webui/197deddf630ee3c28715aa7b6e9cbb9d4d8a1c46/requirements.txt
+ADD ${SDWEBUI_DEPS} /tmp/
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r /tmp/requirements.txt
 
 COPY startup.sh /bin/
+
+VOLUME [ "/sd-webui" ]
+WORKDIR /sd-webui
 
 ENTRYPOINT [ "startup.sh", "--use-intel-oneapi", "--server-name=0.0.0.0" ]
