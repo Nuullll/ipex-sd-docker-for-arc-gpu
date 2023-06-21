@@ -109,18 +109,25 @@ RUN apt-get update && \
 # Stable Diffusion Web UI dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
-    libgl1 libglib2.0-0 && \
+    libgl1 \
+    libglib2.0-0 \
+    python3-venv && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
-ARG SDWEBUI_DEPS=https://raw.githubusercontent.com/jbaboval/stable-diffusion-webui/197deddf630ee3c28715aa7b6e9cbb9d4d8a1c46/requirements.txt
+# PIP extra index url: THU tuna
+ENV PIP_EXTRA_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
+
+ARG SDWEBUI_DEPS=https://raw.githubusercontent.com/vladmandic/automatic/c02ccc4f0001a8eb9b9b5ff32522f067bbe55103/requirements.txt
 ADD ${SDWEBUI_DEPS} /tmp/
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r /tmp/requirements.txt
+    pip install -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
 
 COPY startup.sh /bin/
 
+VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
 WORKDIR /sd-webui
 
-ENTRYPOINT [ "startup.sh", "--use-intel-oneapi", "--server-name=0.0.0.0" ]
+ENTRYPOINT [ "startup.sh", "--use-ipex", "--listen" ]

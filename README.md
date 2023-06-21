@@ -1,9 +1,9 @@
 # ipex-sd-docker-for-arc-gpu
 Docker for Intel Arc GPU: Intel Pytorch EXtension + Stable Diffusion web ui
 
-## [jbaboval/stable-diffusion-webui](https://github.com/jbaboval/stable-diffusion-webui)
+## [vladmandic/automatic](https://github.com/vladmandic/automatic)
 
-Build docker image
+### Build docker image in PowerShell
 
 ```powershell
 docker build --build-arg UBUNTU_VERSION=22.04 `
@@ -20,19 +20,22 @@ docker build --build-arg UBUNTU_VERSION=22.04 `
 --build-arg TORCHVISION_VERSION=0.14.1a0+5e8e2f1 `
 --build-arg IPEX_WHL_URL=https://developer.intel.com/ipex-whl-stable-xpu `
 --build-arg DEVICE=flex `
--t ipex-arc-sd:xpu-1.13.200-jbaboval `
+-t ipex-arc-sd:test `
 -f Dockerfile .
 ```
 
 **Notes: `ICD_VER=23.05.25593.18-601~22.04` is used by the [IPEX xpu Dockerfile](https://github.com/intel/intel-extension-for-pytorch/blob/e413ea5f4501ed9bfc9ff4040b46ff4ce8fca87a/docker/build.sh#L34), which triggers an [OpenCL Out-Of-Memory error](https://github.com/vladmandic/automatic/issues/1474) for me.**
 
-Run docker container
+### Run docker container in PowerShell
+
+1. Run container with `-it` for the first time, to visualize the installation progress.
 
 ```powershell
 docker run -it `
 --device /dev/dxg `
 -v /usr/lib/wsl:/usr/lib/wsl `
--v C:\your\windows\mount\path:/sd-webui `
+-v $home\docker-mount\sd-webui:/sd-webui `
 -p 7860:7860 `
-ipex-arc-sd:xpu-1.13.200-jbaboval
+--name sd-server `
+ipex-arc-sd:test
 ```
