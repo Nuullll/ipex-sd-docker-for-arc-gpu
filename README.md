@@ -20,7 +20,7 @@ docker build --build-arg UBUNTU_VERSION=22.04 `
 --build-arg TORCHVISION_VERSION=0.14.1a0+5e8e2f1 `
 --build-arg IPEX_WHL_URL=https://developer.intel.com/ipex-whl-stable-xpu `
 --build-arg DEVICE=flex `
--t ipex-arc-sd:test `
+-t ipex-arc-sd:v0.1 `
 -f Dockerfile .
 ```
 
@@ -37,5 +37,5 @@ docker run -it `
 -v $home\docker-mount\sd-webui:/sd-webui `
 -p 7860:7860 `
 --name sd-server `
-ipex-arc-sd:test
+ipex-arc-sd:v0.1
 ```
