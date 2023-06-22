@@ -5,7 +5,7 @@ The SD Web UI variant used by the image: [vladmandic/automatic](https://github.c
 
 ### Run docker container on Linux
 
-Run container, with image pulled from https://hub.docker.com/r/nuullll/ipex-arc-sd
+Run container, with image pulled from https://hub.docker.com/r/disty0/sd-webui-ipex
 
 ```sh
 docker run -it \
@@ -14,12 +14,12 @@ docker run -it \
 -v deps:/deps \
 -p 7860:7860 \
 --name sd-server \
-nuullll/ipex-arc-sd:latest
+disty0/sd-webui-ipex:latest
 ```
 
 ### Run docker container in PowerShell on Windows
 
-Run container, with image pulled from https://hub.docker.com/r/nuullll/ipex-arc-sd
+Run container, with image pulled from https://hub.docker.com/r/disty0/sd-webui-ipex
 
 ```powershell
 docker run -it `
@@ -29,7 +29,7 @@ docker run -it `
 -v deps:/deps `
 -p 7860:7860 `
 --name sd-server `
-nuullll/ipex-arc-sd:latest
+disty0/sd-webui-ipex:latest
 ```
 
 ### Parameters
@@ -40,7 +40,7 @@ nuullll/ipex-arc-sd:latest
 4. `-v deps:/deps` specifies a [volume](https://docs.docker.com/storage/volumes/) managed by the docker engine, named as `deps` (just choose any name you like), to be mounted as `/deps` directory inside the container. `/deps` is configured (see `./startup.sh`) to store all dynamic python dependencies (e.g. packages needed by Web UI extensions) required after the Web UI launches. You can mount the `deps` volume to multiple containers so that those dynamic dependencies would be downloaded and installed only once. This is useful for users who want to run containers with different Web UI arguments (e.g. `--debug`), and for those who actually build local docker images.
 5. `-p 7860:7860` specifies the [published port](https://docs.docker.com/network/).
 6. `--name <container_name>` assigns the container a meaningful name. You can restart the same container (after it exits) by `docker start -i <container_name>`.
-7. `nuullll/ipex-arc-sd:latest` specifies the docker image. If it doesn't exist locally, docker will pull from the [corresponding dockerhub registry](https://hub.docker.com/r/nuullll/ipex-arc-sd).
+7. `disty0/sd-webui-ipex:latest` specifies the docker image. If it doesn't exist locally, docker will pull from the [corresponding dockerhub registry](https://hub.docker.com/r/disty0/sd-webui-ipex).
 
 ### (For Developers) Build docker image 
 
@@ -50,14 +50,14 @@ nuullll/ipex-arc-sd:latest
 docker build --build-arg UBUNTU_VERSION=22.04 \
 --build-arg PYTHON=python3.10 \
 --build-arg ICD_VER=23.17.26241.21-647~22.04 \
---build-arg LEVEL_ZERO_GPU_VER=1.3.25593.18-601~22.04 \
---build-arg LEVEL_ZERO_VER=1.9.4+i589~22.04 \
---build-arg LEVEL_ZERO_DEV_VER=1.9.4+i589~22.04 \
+--build-arg LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04 \
+--build-arg LEVEL_ZERO_VER=1.11.0-647~22.04 \
+--build-arg LEVEL_ZERO_DEV_VER=1.11.0-647~22.04 \
 --build-arg DPCPP_VER=2023.1.0-46305 \
 --build-arg MKL_VER=2023.1.0-46342 \
 --build-arg CMPLR_COMMON_VER=2023.1.0 \
 --build-arg DEVICE=flex \
--t ipex-arc-sd \
+-t sd-webui-ipex \
 -f Dockerfile .
 ```
 
@@ -67,15 +67,13 @@ docker build --build-arg UBUNTU_VERSION=22.04 \
 docker build --build-arg UBUNTU_VERSION=22.04 `
 --build-arg PYTHON=python3.10 `
 --build-arg ICD_VER=23.17.26241.21-647~22.04 `
---build-arg LEVEL_ZERO_GPU_VER=1.3.25593.18-601~22.04 `
---build-arg LEVEL_ZERO_VER=1.9.4+i589~22.04 `
---build-arg LEVEL_ZERO_DEV_VER=1.9.4+i589~22.04 `
+--build-arg LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04 `
+--build-arg LEVEL_ZERO_VER=1.11.0-647~22.04 `
+--build-arg LEVEL_ZERO_DEV_VER=1.11.0-647~22.04 `
 --build-arg DPCPP_VER=2023.1.0-46305 `
 --build-arg MKL_VER=2023.1.0-46342 `
 --build-arg CMPLR_COMMON_VER=2023.1.0 `
 --build-arg DEVICE=flex `
--t ipex-arc-sd `
+-t sd-webui-ipex `
 -f Dockerfile .
 ```
-
-**Notes: `ICD_VER=23.05.25593.18-601~22.04` is used by the [IPEX xpu Dockerfile](https://github.com/intel/intel-extension-for-pytorch/blob/e413ea5f4501ed9bfc9ff4040b46ff4ce8fca87a/docker/build.sh#L34), which triggers an [OpenCL Out-Of-Memory error](https://github.com/vladmandic/automatic/issues/1474) for me.**
