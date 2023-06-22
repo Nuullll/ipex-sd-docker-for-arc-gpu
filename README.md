@@ -1,4 +1,4 @@
-# ipex-sd-docker-for-arc-gpu
+# docker-sd-webui-ipex
 Docker for Intel Arc GPU: Intel Pytorch EXtension + Stable Diffusion web ui
 
 The SD Web UI variant used by the image: [vladmandic/automatic](https://github.com/vladmandic/automatic)
