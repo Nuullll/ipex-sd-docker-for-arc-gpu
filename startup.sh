@@ -1,5 +1,4 @@
 #!/bin/sh
-
-git -C . fetch || git clone https://github.com/vladmandic/automatic.git .
-
+git -C automatic fetch || git clone https://github.com/vladmandic/automatic.git
+cd automatic
 ./webui.sh --use-ipex --listen

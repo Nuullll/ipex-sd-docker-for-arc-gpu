@@ -115,7 +115,7 @@ RUN chmod 755 /bin/setperms.sh
 ARG uid=1000
 ARG gid=1000
 RUN groupadd -g ${gid} sd-webui
-RUN useradd -u ${uid} -g sd-webui --no-log-init sd-webui
+RUN useradd -u ${uid} -g sd-webui --no-log-init -m sd-webui
 
 VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
