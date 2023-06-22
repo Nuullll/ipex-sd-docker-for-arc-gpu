@@ -76,16 +76,6 @@ RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/I
 ENV PATH=/opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin:$PATH
 ENV LD_LIBRARY_PATH=/opt/intel/oneapi/lib:/opt/intel/oneapi/lib/intel64:$LD_LIBRARY_PATH
 
-# IPEX
-ARG TORCH_VERSION
-ARG TORCHVISION_VERSION
-ARG IPEX_VERSION
-ARG IPEX_WHL_URL
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install torch==${TORCH_VERSION} \
-                intel_extension_for_pytorch==${IPEX_VERSION} \
-                torchvision==${TORCHVISION_VERSION} -f ${IPEX_WHL_URL}
-
 # Intel Graphics driver
 ARG DEVICE
 RUN no_proxy=$no_proxy wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | \
@@ -111,23 +101,27 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     libgl1 \
     libglib2.0-0 \
-    python3-venv && \
+    python3-venv \
+    numactl && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
-# PIP extra index url: THU tuna
-ENV PIP_EXTRA_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple
-
-ARG SDWEBUI_DEPS=https://raw.githubusercontent.com/vladmandic/automatic/c02ccc4f0001a8eb9b9b5ff32522f067bbe55103/requirements.txt
-ADD ${SDWEBUI_DEPS} /tmp/
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r /tmp/requirements.txt && \
-    rm /tmp/requirements.txt
-
 COPY startup.sh /bin/
+COPY setperms.sh /bin/
+RUN chmod 755 /bin/startup.sh
+RUN chmod 755 /bin/setperms.sh
+
+# Set user and group
+ARG uid=1000
+ARG gid=1000
+RUN groupadd -g ${gid} sd-webui
+RUN useradd -u ${uid} -g sd-webui --no-log-init sd-webui
 
 VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
+
+ENV venv_dir=/deps/venv
 WORKDIR /sd-webui
 
-ENTRYPOINT [ "startup.sh", "--use-ipex", "--listen" ]
+ENTRYPOINT [ "setperms.sh"]
+CMD [ "startup.sh"]
