@@ -107,15 +107,7 @@ RUN apt-get update && \
     rm -rf  /var/lib/apt/lists/*
 
 COPY startup.sh /bin/
-COPY setperms.sh /bin/
 RUN chmod 755 /bin/startup.sh
-RUN chmod 755 /bin/setperms.sh
-
-# Set user and group
-ARG uid=1000
-ARG gid=1000
-RUN groupadd -g ${gid} sd-webui
-RUN useradd -u ${uid} -g sd-webui --no-log-init -m sd-webui
 
 VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
@@ -123,5 +115,4 @@ VOLUME [ "/sd-webui" ]
 ENV venv_dir=/deps/venv
 WORKDIR /sd-webui
 
-ENTRYPOINT [ "setperms.sh"]
-CMD [ "startup.sh"]
+ENTRYPOINT [ "startup.sh", "-f", "--use-ipex", "--listen" ]
