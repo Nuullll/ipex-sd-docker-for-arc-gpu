@@ -5,7 +5,7 @@ The Stable Diffusion Web UI variant used by the image: [vladmandic/automatic](ht
 
 ### Run docker container on Linux
 
-Run container, with image pulled from https://hub.docker.com/r/disty0/sd-webui-ipex
+Run container, with image pulled from https://hub.docker.com/r/nuullll/ipex-arc-sd
 
 ```sh
 docker run -it \
@@ -19,7 +19,7 @@ disty0/sd-webui-ipex:latest
 
 ### Run docker container in PowerShell on Windows
 
-Run container, with image pulled from https://hub.docker.com/r/disty0/sd-webui-ipex
+Run container, with image pulled from https://hub.docker.com/r/nuullll/ipex-arc-sd
 
 ```powershell
 docker run -it `
@@ -29,7 +29,7 @@ docker run -it `
 -v deps:/deps `
 -p 7860:7860 `
 --name sd-server `
-disty0/sd-webui-ipex:latest
+nuullll/ipex-arc-sd:v0.1
 ```
 
 ### Parameters
@@ -40,7 +40,7 @@ disty0/sd-webui-ipex:latest
 4. `-v deps:/deps` specifies a [volume](https://docs.docker.com/storage/volumes/) managed by the docker engine, named as `deps` (just choose any name you like), to be mounted as `/deps` directory inside the container. `/deps` is configured (see `./startup.sh`) to store all dynamic python dependencies (e.g. packages needed by Web UI extensions) required after the Web UI launches. You can mount the `deps` volume to multiple containers so that those dynamic dependencies would be downloaded and installed only once. This is useful for users who want to run containers with different Web UI arguments (e.g. `--debug`), and for those who actually build local docker images.
 5. `-p 7860:7860` specifies the [published port](https://docs.docker.com/network/).
 6. `--name <container_name>` assigns the container a meaningful name. You can restart the same container (after it exits) by `docker start -i <container_name>`.
-7. `disty0/sd-webui-ipex:latest` specifies the docker image. If it doesn't exist locally, docker will pull from the [corresponding dockerhub registry](https://hub.docker.com/r/disty0/sd-webui-ipex).
+7. `nuullll/ipex-arc-sd:v0.1` specifies the docker image. If it doesn't exist locally, docker will pull from the [corresponding dockerhub registry](https://hub.docker.com/r/nuullll/ipex-arc-sd).
 
 ### (For Developers) Build docker image 
 
