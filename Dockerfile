@@ -13,40 +13,15 @@
 # ============================================================================
 
 ARG UBUNTU_VERSION
-
-FROM ubuntu:${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION} AS oneapi-lib-installer
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
-    apt-utils \
-    build-essential \
     ca-certificates \
-    clinfo \
-    curl \
-    git \
     gnupg2 \
     gpg-agent \
-    rsync \
-    sudo \
     unzip \
-    wget && \
-    apt-get clean && \
-    rm -rf  /var/lib/apt/lists/*
-
-ARG PYTHON
-RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
-    ${PYTHON} lib${PYTHON} python3-pip && \
-    apt-get clean && \
-    rm -rf  /var/lib/apt/lists/*
-
-RUN pip --no-cache-dir install --upgrade \
-    pip \
-    setuptools
-
-RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
-    ln -sf $(which ${PYTHON}) /usr/local/bin/python3 && \
-    ln -sf $(which ${PYTHON}) /usr/bin/python && \
-    ln -sf $(which ${PYTHON}) /usr/bin/python3
+    wget
 
 # oneAPI packages
 RUN no_proxy=$no_proxy wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
@@ -72,16 +47,46 @@ RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/I
     cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/opencl/libpi_level_zero.so && \
     rm -rf 2023.1-linux-hotfix.zip 2023.1-linux-hotfix/
 
-# Set oneAPI lib env
-ENV PATH=/opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin:$PATH
-ENV LD_LIBRARY_PATH=/opt/intel/oneapi/lib:/opt/intel/oneapi/lib/intel64:$LD_LIBRARY_PATH
-
-# Intel Graphics driver
+# Prepare Intel Graphics driver index
 ARG DEVICE
 RUN no_proxy=$no_proxy wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | \
     gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
 RUN printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy %s\n' "$DEVICE" | \
     tee /etc/apt/sources.list.d/intel.gpu.jammy.list
+
+ARG UBUNTU_VERSION
+FROM ubuntu:${UBUNTU_VERSION}
+
+RUN mkdir /oneapi-lib
+COPY --from=oneapi-lib-installer /opt/intel/oneapi/lib /oneapi-lib/
+ARG CMPLR_COMMON_VER
+COPY --from=oneapi-lib-installer /opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin/sycl-ls /bin/
+COPY --from=oneapi-lib-installer /usr/share/keyrings/intel-graphics.gpg /usr/share/keyrings/intel-graphics.gpg
+COPY --from=oneapi-lib-installer /etc/apt/sources.list.d/intel.gpu.jammy.list /etc/apt/sources.list.d/intel.gpu.jammy.list
+
+# Set oneAPI lib env
+ENV LD_LIBRARY_PATH=/oneapi-lib:/oneapi-lib/intel64:$LD_LIBRARY_PATH
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --fix-missing \
+    ca-certificates && \
+    apt-get clean && \
+    rm -rf  /var/lib/apt/lists/*
+
+ARG PYTHON
+RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
+    ${PYTHON} lib${PYTHON} python3-pip && \
+    apt-get clean && \
+    rm -rf  /var/lib/apt/lists/*
+
+RUN pip --no-cache-dir install --upgrade \
+    pip \
+    setuptools
+
+RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
+    ln -sf $(which ${PYTHON}) /usr/local/bin/python3 && \
+    ln -sf $(which ${PYTHON}) /usr/bin/python && \
+    ln -sf $(which ${PYTHON}) /usr/bin/python3
 
 ARG ICD_VER
 ARG LEVEL_ZERO_GPU_VER
@@ -101,7 +106,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     libgl1 \
     libglib2.0-0 \
+    libgomp1 \
     python3-venv \
+    git \
     numactl && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
