@@ -52,7 +52,7 @@ nuullll/ipex-arc-sd:v0.1
 6. `--name <container_name>` assigns the container a meaningful name. You can restart the same container (after it exits) by `docker start -i <container_name>`.
 7. `nuullll/ipex-arc-sd:v0.1` specifies the docker image. If it doesn't exist locally, docker will pull from the [corresponding dockerhub registry](https://hub.docker.com/r/nuullll/ipex-arc-sd).
 
-## (For Developers) Build docker image 
+## (For Developers) Build docker image locally
 
 ### Windows (PowerShell)
 
