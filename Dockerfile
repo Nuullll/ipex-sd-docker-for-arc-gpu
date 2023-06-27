@@ -12,7 +12,7 @@
 # limitations under the License.
 # ============================================================================
 
-ARG UBUNTU_VERSION
+ARG UBUNTU_VERSION=22.04
 FROM ubuntu:${UBUNTU_VERSION} AS oneapi-lib-installer
 
 RUN apt-get update && \
@@ -29,10 +29,10 @@ RUN no_proxy=$no_proxy wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-P
    echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
    | tee /etc/apt/sources.list.d/oneAPI.list
 
-ARG DPCPP_VER
-ARG MKL_VER
+ARG DPCPP_VER=2023.1.0-46305
+ARG MKL_VER=2023.1.0-46342
 # intel-oneapi-compiler-shared-common provides `sycl-ls`
-ARG CMPLR_COMMON_VER
+ARG CMPLR_COMMON_VER=2023.1.0
 # Install runtime libs to reduce image size
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
@@ -48,18 +48,18 @@ RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/I
     rm -rf 2023.1-linux-hotfix.zip 2023.1-linux-hotfix/
 
 # Prepare Intel Graphics driver index
-ARG DEVICE
+ARG DEVICE=flex
 RUN no_proxy=$no_proxy wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | \
     gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg
 RUN printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/graphics/ubuntu jammy %s\n' "$DEVICE" | \
     tee /etc/apt/sources.list.d/intel.gpu.jammy.list
 
-ARG UBUNTU_VERSION
+ARG UBUNTU_VERSION=22.04
 FROM ubuntu:${UBUNTU_VERSION}
 
 RUN mkdir /oneapi-lib
 COPY --from=oneapi-lib-installer /opt/intel/oneapi/lib /oneapi-lib/
-ARG CMPLR_COMMON_VER
+ARG CMPLR_COMMON_VER=2023.1.0
 COPY --from=oneapi-lib-installer /opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin/sycl-ls /bin/
 COPY --from=oneapi-lib-installer /usr/share/keyrings/intel-graphics.gpg /usr/share/keyrings/intel-graphics.gpg
 COPY --from=oneapi-lib-installer /etc/apt/sources.list.d/intel.gpu.jammy.list /etc/apt/sources.list.d/intel.gpu.jammy.list
@@ -73,7 +73,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf  /var/lib/apt/lists/*
 
-ARG PYTHON
+ARG PYTHON=python3.10
 RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
     ${PYTHON} lib${PYTHON} python3-pip && \
     apt-get clean && \
@@ -88,10 +88,10 @@ RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python3
 
-ARG ICD_VER
-ARG LEVEL_ZERO_GPU_VER
-ARG LEVEL_ZERO_VER
-ARG LEVEL_ZERO_DEV_VER
+ARG ICD_VER=23.17.26241.21-647~22.04
+ARG LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04
+ARG LEVEL_ZERO_VER=1.11.0-647~22.04
+ARG LEVEL_ZERO_DEV_VER=1.11.0-647~22.04
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     intel-opencl-icd=${ICD_VER} \

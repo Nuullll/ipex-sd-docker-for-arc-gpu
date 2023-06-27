@@ -54,39 +54,11 @@ nuullll/ipex-arc-sd:v0.1
 
 ## (For Developers) Build docker image locally
 
-### Windows (PowerShell)
-
 ```powershell
-docker build --build-arg UBUNTU_VERSION=22.04 `
---build-arg PYTHON=python3.10 `
---build-arg ICD_VER=23.17.26241.21-647~22.04 `
---build-arg LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04 `
---build-arg LEVEL_ZERO_VER=1.11.0-647~22.04 `
---build-arg LEVEL_ZERO_DEV_VER=1.11.0-647~22.04 `
---build-arg DPCPP_VER=2023.1.0-46305 `
---build-arg MKL_VER=2023.1.0-46342 `
---build-arg CMPLR_COMMON_VER=2023.1.0 `
---build-arg DEVICE=flex `
--t ipex-arc-sd `
--f Dockerfile .
+docker build -t ipex-arc-sd -f Dockerfile .
 ```
 
-### Linux (Shell)
-
-```sh
-docker build --build-arg UBUNTU_VERSION=22.04 \
---build-arg PYTHON=python3.10 \
---build-arg ICD_VER=23.17.26241.21-647~22.04 \
---build-arg LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04 \
---build-arg LEVEL_ZERO_VER=1.11.0-647~22.04 \
---build-arg LEVEL_ZERO_DEV_VER=1.11.0-647~22.04 \
---build-arg DPCPP_VER=2023.1.0-46305 \
---build-arg MKL_VER=2023.1.0-46342 \
---build-arg CMPLR_COMMON_VER=2023.1.0 \
---build-arg DEVICE=flex \
--t ipex-arc-sd \
--f Dockerfile .
-```
+Refer to [Dockerfile](./Dockerfile) for available build arguments.
 
 ## Contributors
 
