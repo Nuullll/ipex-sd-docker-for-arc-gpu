@@ -44,7 +44,7 @@ nuullll/ipex-arc-sd:latest
 - [`docker run`](https://docs.docker.com/engine/reference/commandline/run/)通过一个镜像来创建并运行**一个新容器**。
 - 最后一个参数`nuullll/ipex-arc-sd:latest`指定了镜像，格式是`<image_name>:<tag>`。如果在本地没有找到这个镜像，docker会尝试从[DockerHub远程](https://hub.docker.com/r/nuullll/ipex-arc-sd)拉取。
 - `--name sd-server`给新创建的容器指定了一个有意义的名字（比如`sd-server`）。这个参数很有用但不是必须的。
-- `-it`会在容器启动后生成一个可交互的命令行。强烈建议使用这个选项，因为我们可能需要通过命令行的日志输出来监控Web UI的状态。output.
+- `-it`会在容器启动后生成一个可交互的命令行。强烈建议使用这个选项，因为我们可能需要通过命令行的日志输出来监控Web UI的状态。
 - 在linux中，需要使用`--device /dev/dri`来授权容器访问你的显卡。在windows中，需要同时使用`--device /dev/dxg`和`-v /usr/lib/wsl:/usr/lib/wsl`来授权容器访问你的显卡。详见[wslg示例](https://github.com/microsoft/wslg/blob/main/samples/container/Containers.md#containerized-applications-access-to-the-vgpu)。
 - `-v <host_mount_dir>:/sd-webui`指定了需要被[绑定挂载](https://docs.docker.com/storage/bind-mounts/)到容器`/sd-webui`路径的宿主机目录。在第一次启动容器时，应当指定一个宿主机上的**空目录或不存在的目录**作为`<host_mount_dir>`，使得容器能够将[SD.Next](https://github.com/vladmandic/automatic)的源代码下载到该目录。如果你想另起一个新容器（比如[覆盖镜像的entrypoint](https://docs.docker.com/engine/reference/run/#entrypoint-default-command-to-execute-at-runtime)）同时共享着已经被其他容器初始化过的Web UI目录，应当指定相同的`<host_mount_dir>`。
 - `-v <volume_name>:/deps`指定了一个由docker引擎管理的[数据卷](https://docs.docker.com/storage/volumes/)（例如，名为`deps`的数据卷），并将其挂载到容器内部的`/deps`目录。`/deps`会成为python虚拟环境的根目录（见[`Dockerfile: ENV venv_dir`](https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/blob/main/Dockerfile)），用于存放Web UI启动后需要用到的动态python依赖项（例如Web UI扩展所需要的包）。你可以将`deps`数据卷挂载到多个容器，那么这些动态依赖项只需要下载和安装一次。对于想以不同Web UI参数（比如`--debug`）运行容器的用户以及本地创建docker镜像的开发者来说，这很有用。
