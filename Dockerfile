@@ -107,6 +107,7 @@ RUN apt-get update && \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
+    libgoogle-perftools-dev \
     python3-venv \
     git \
     numactl && \
@@ -120,6 +121,7 @@ VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
 
 ENV venv_dir=/deps/venv
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so
 WORKDIR /sd-webui
 
 ENTRYPOINT [ "startup.sh", "-f", "--use-ipex", "--listen" ]
