@@ -14,6 +14,8 @@
   <img src="https://img.shields.io/docker/pulls/nuullll/ipex-arc-sd?label=DockerHub:nuullll%2Fipex-arc-sd" />
 </a>
 
+[更新日志](/zh-cn/release-notes)
+
 ## Stable Diffusion Web UI
 
 此镜像使用的Stable Diffusion Web UI版本为：[SD.Next](https://github.com/vladmandic/automatic) (或者叫 vladmandic/automatic).

@@ -14,6 +14,8 @@ You can use your Arc GPUs for fancy image generations with minimal setup! Start 
   <img src="https://img.shields.io/docker/pulls/nuullll/ipex-arc-sd?label=DockerHub:nuullll%2Fipex-arc-sd" />
 </a>
 
+[Release Notes](/release-notes)
+
 ## Stable Diffusion Web UI
 
 Stable Diffusion Web UI variant used by the image: [SD.Next](https://github.com/vladmandic/automatic) (A.K.A, vladmandic/automatic).

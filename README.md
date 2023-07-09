@@ -7,6 +7,7 @@
 - [Documentation](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/)
 - [Getting Started](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/getting-started)
 - [FAQ](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/faq)
+- [Release Notes](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/release-notes)
 
 The [docker image](https://hub.docker.com/r/nuullll/ipex-arc-sd) includes
 - Intel oneAPI DPC++ runtime libs _(Note: compiler executables are not included)_
