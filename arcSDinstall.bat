@@ -1,10 +1,29 @@
+@echo off
+setlocal enableextensions
+
 winget install docker.dockerdesktop
-@echo Please open docker desktop and config the proxies.
-@echo If a reboot is needed, do it and open this script again.
-@pause
-@echo Where do you wanna install sd-webui? Your models and pictures will be there. (default=%UserProfile%\docker-mount\sd-webui)
-@set /p loc=
-@ If "%loc%" == "" (
+
+If %ERRORLEVEL% EQU 0 (
+    cmd /k "%0"
+)
+::if the package is successfully installed, open a new cmd to run this script again
+
+
+
+If %ERRORLEVEL% EQU -1978335189 (
+    ::If the package is already installed and has no update
+    goto :continue
+) ELSE (
+    ::other errors
+    goto :EOF
+)
+
+
+:continue
+echo Please open docker desktop and config the proxies.
+echo Where do you wanna install sd-webui? Your models and pictures will be there. (default=%UserProfile%\docker-mount\sd-webui)
+set /p loc=
+If "%loc%" == "" (
     @set loc=%UserProfile%\docker-mount\sd-webui
 )
 
@@ -16,4 +35,5 @@ docker run -it ^
 -p 7860:7860 ^
 --name sd-server ^
 nuullll/ipex-arc-sd:latest
-@pause
+:EOF
+pause
