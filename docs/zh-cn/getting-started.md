@@ -20,6 +20,7 @@ docker run -it `
 -v /usr/lib/wsl:/usr/lib/wsl `
 -v $home\docker-mount\sd-webui:/sd-webui `
 -v deps:/deps `
+-v huggingface:/root/.cache/huggingface `
 -p 7860:7860 `
 --name sd-server `
 nuullll/ipex-arc-sd:latest
@@ -32,6 +33,7 @@ docker run -it \
 --device /dev/dri \
 -v ~/docker-mount/sd-webui:/sd-webui \
 -v deps:/deps \
+-v huggingface:/root/.cache/huggingface \
 -p 7860:7860 \
 --name sd-server \
 nuullll/ipex-arc-sd:latest
@@ -64,6 +66,7 @@ docker run -it `
 >> -v /usr/lib/wsl:/usr/lib/wsl `
 >> -v $home\docker-mount\sd-webui:/sd-webui `
 >> -v deps:/deps `
+>> -v huggingface:/root/.cache/huggingface `
 >> -p 7860:7860 `
 >> --name sd-server `
 >> nuullll/ipex-arc-sd:latest
@@ -273,6 +276,7 @@ docker run -it `
 -v /usr/lib/wsl:/usr/lib/wsl `
 -v $home\docker-mount\sd-webui:/sd-webui `
 -v deps:/deps `
+-v huggingface:/root/.cache/huggingface `
 -p 7860:7860 `
 --name customized-sd-server `
 nuullll/ipex-arc-sd:latest `
@@ -286,6 +290,7 @@ docker run -it \
 --device /dev/dri \
 -v ~/docker-mount/sd-webui:/sd-webui \
 -v deps:/deps \
+-v huggingface:/root/.cache/huggingface \
 -p 7860:7860 \
 --name customized-sd-server \
 nuullll/ipex-arc-sd:latest \
@@ -310,6 +315,7 @@ docker run -it `
 -v /usr/lib/wsl:/usr/lib/wsl `
 -v $home\docker-mount\sd-webui:/sd-webui `
 -v deps:/deps `
+-v huggingface:/root/.cache/huggingface `
 -p 7860:7860 `
 --rm `
 nuullll/ipex-arc-sd:latest --upgrade
@@ -322,6 +328,7 @@ docker run -it \
 --device /dev/dri \
 -v ~/docker-mount/sd-webui:/sd-webui \
 -v deps:/deps \
+-v huggingface:/root/.cache/huggingface \
 -p 7860:7860 \
 --rm \
 nuullll/ipex-arc-sd:latest --upgrade

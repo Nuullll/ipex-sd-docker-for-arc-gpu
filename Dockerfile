@@ -119,6 +119,7 @@ RUN chmod 755 /bin/startup.sh
 
 VOLUME [ "/deps" ]
 VOLUME [ "/sd-webui" ]
+VOLUME [ "/root/.cache/huggingface" ]
 
 ENV venv_dir=/deps/venv
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so

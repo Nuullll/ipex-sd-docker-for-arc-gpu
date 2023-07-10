@@ -18,6 +18,7 @@
 > -v /usr/lib/wsl:/usr/lib/wsl `
 > -v $home\docker-mount\sd-webui:/sd-webui `
 > -v deps:/deps `
+> -v huggingface:/root/.cache/huggingface `
 > -p 7860:7860 `
 > --rm `
 > -e http_proxy=<host_ip>:<proxy_port> `
@@ -39,6 +40,7 @@
 > -v /usr/lib/wsl:/usr/lib/wsl `
 > -v $home\docker-mount\sd-webui:/sd-webui `
 > -v deps:/deps `
+> -v huggingface:/root/.cache/huggingface `
 > -p 7860:7860 `
 > --rm `
 > -e PIP_EXTRA_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple `
