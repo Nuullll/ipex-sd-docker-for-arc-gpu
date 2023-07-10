@@ -20,7 +20,7 @@ If %ERRORLEVEL% EQU -1978335189 (
 
 
 :continue
-echo Please open docker desktop and config the proxies.
+echo Please OPEN DOCKER DESKTOP then config the proxies (if needed).
 echo Where do you wanna install sd-webui? Your models and pictures will be there. (default=%UserProfile%\docker-mount\sd-webui)
 set /p loc=
 If "%loc%" == "" (
