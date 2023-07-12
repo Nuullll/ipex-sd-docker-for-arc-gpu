@@ -122,7 +122,7 @@ Abort was called at 718 line in file:
 DPCPP out of memory. Tried to allocate 186.00 MiB (GPU Time taken: 22.18s | GPU active 3754 MB reserved 3888 MB | System peak 3754 MB total 13005 MB
 ```
 
-> 见[#8](https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8)。我复现了这个问题，但可惜原因不明。看起来像是内存泄漏问题。
+> 见[#8](https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8)。最新的[SD.Next](https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175)已经修复这个问题。
 >
-> 解决方案：重启Web UI服务。
+> 解决方案：根据[这里的指示](getting-started.md#更新sdnext源代码)将SD.Next代码更新。
 

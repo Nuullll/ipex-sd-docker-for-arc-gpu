@@ -6,7 +6,7 @@ Compressed image size: 831.25 MB
 
 Important notes:
 
-* The severe VRAM leak problem of IPEX in WSL2 (https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8, https://github.com/intel/intel-extension-for-pytorch/issues/388) has been worked around in SD.Next https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175. **If you are using WSL, please be sure to upgrade your SD.Next codebase by following [this instruction](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/getting-started?id=upgrade-sdnext-source-code).**
+* The severe VRAM leak problem of IPEX in WSL2 (https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8, https://github.com/intel/intel-extension-for-pytorch/issues/388) has been worked around in SD.Next https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175. **If you are using WSL, please be sure to upgrade your SD.Next codebase by following [this instruction](getting-started.md#upgrade-sdnext-source-code).**
 
 Major changes:
 

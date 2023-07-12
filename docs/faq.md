@@ -122,7 +122,7 @@ Full error:
 DPCPP out of memory. Tried to allocate 186.00 MiB (GPU Time taken: 22.18s | GPU active 3754 MB reserved 3888 MB | System peak 3754 MB total 13005 MB
 ```
 
-> See [#8](https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8). I've reproduced the issue, but unfortunately root cause is unclear. It seems like a memory leak issue.
+> See [#8](https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8). Now fixed by latest [SD.Next](https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175).
 >
-> Solution: restart the Web UI server.
+> Solution: upgrade your SD.Next codebase by following [this instruction](getting-started.md#upgrade-sdnext-source-code)
 

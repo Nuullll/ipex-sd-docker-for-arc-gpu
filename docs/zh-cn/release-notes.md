@@ -6,7 +6,7 @@
 
 重要通知：
 
-* IPEX在WSL2中存在严重的显存泄漏问题（https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8, https://github.com/intel/intel-extension-for-pytorch/issues/388），现已在SD.Next https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175 中临时解决。**如果你使用的是WSL，请根据[这里的指示](https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/getting-started?id=upgrade-sdnext-source-code)将SD.Next代码更新。**
+* IPEX在WSL2中存在严重的显存泄漏问题（https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/issues/8, https://github.com/intel/intel-extension-for-pytorch/issues/388），现已在SD.Next https://github.com/vladmandic/automatic/commit/c3a4293f2227fe77b9ea908c99a1bda2aef43175 中临时解决。**如果你使用的是WSL，请根据[这里的指示](getting-started.md#更新sdnext源代码)将SD.Next代码更新。**
 
 主要变动：
 
