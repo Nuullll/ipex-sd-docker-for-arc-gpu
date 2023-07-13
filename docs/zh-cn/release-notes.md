@@ -1,6 +1,23 @@
 # 更新日志
 
-## [v0.3](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.3/images/sha256-accb961e63a14b92567e7c594ad5222fd4592a40b8e3c5a76310a70257b1f00e?context=explore) （最新）
+## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore) （最新）
+
+压缩后镜像大小：831.25 MB
+
+本次更新仅在[v0.3版本](release-notes#v03)基础上做了一个重要改动：
+
+- 强制将compute runtime中可用显存大小设为100%。
+
+在Windows 11 22H2 22621.1848 + i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)环境下测试通过。
+
+对于A770，现在Web UI中检测到的显存大小从13005增加到了16256MB。
+
+```txt
+v0.3及以前 >>>> Torch detected GPU: Intel(R) Graphics [0x56a0] VRAM 13005 Compute Units 512
+v0.4 >>>>>>>>> Torch detected GPU: Intel(R) Graphics [0x56a0] VRAM 16256 Compute Units 512
+```
+
+## [v0.3](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.3/images/sha256-accb961e63a14b92567e7c594ad5222fd4592a40b8e3c5a76310a70257b1f00e?context=explore)
 
 压缩后镜像大小：831.25 MB
 

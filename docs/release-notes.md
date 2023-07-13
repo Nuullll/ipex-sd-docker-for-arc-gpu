@@ -1,6 +1,23 @@
 # Release Notes
 
-## [v0.3](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.3/images/sha256-accb961e63a14b92567e7c594ad5222fd4592a40b8e3c5a76310a70257b1f00e?context=explore) (latest)
+## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore) (latest)
+
+Compressed image size: 831.25 MB
+
+This release only includes one major change on top of [release v0.3](release-notes#v03):
+
+- Force 100% available VRAM size for compute runtime.
+
+Tested on Windows 11 22H2 22621.1848 with i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)
+
+For A770, now VRAM size increases from 13005 to 16256 MB.
+
+```txt
+v0.3 or earilier >>>> Torch detected GPU: Intel(R) Graphics [0x56a0] VRAM 13005 Compute Units 512
+v0.4 >>>>>>>>>>>>>>>> Torch detected GPU: Intel(R) Graphics [0x56a0] VRAM 16256 Compute Units 512
+```
+
+## [v0.3](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.3/images/sha256-accb961e63a14b92567e7c594ad5222fd4592a40b8e3c5a76310a70257b1f00e?context=explore)
 
 Compressed image size: 831.25 MB
 
