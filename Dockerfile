@@ -123,6 +123,12 @@ VOLUME [ "/root/.cache/huggingface" ]
 
 ENV venv_dir=/deps/venv
 ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so
+
+# Force 100% available VRAM size for compute-runtime
+# See https://github.com/intel/compute-runtime/issues/586
+ENV NEOReadDebugKeys=1
+ENV ClDeviceGlobalMemSizeAvailablePercent=100
+
 WORKDIR /sd-webui
 
 ENTRYPOINT [ "startup.sh", "-f", "--use-ipex", "--listen" ]
