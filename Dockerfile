@@ -37,7 +37,13 @@ ARG CMPLR_COMMON_VER=2023.1.0
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     intel-oneapi-runtime-dpcpp-cpp=${DPCPP_VER} \
+    intel-oneapi-runtime-compilers=${DPCPP_VER} \
+    intel-oneapi-runtime-dpcpp-cpp-common=${DPCPP_VER} \
+    intel-oneapi-runtime-opencl=${DPCPP_VER} \
+    intel-oneapi-runtime-openmp=${DPCPP_VER} \
+    intel-oneapi-runtime-compilers-common=${DPCPP_VER} \
     intel-oneapi-runtime-mkl=${MKL_VER} \
+    intel-oneapi-runtime-mkl-common=${MKL_VER} \
     intel-oneapi-compiler-shared-common-${CMPLR_COMMON_VER}
 
 # oneAPI 2023.1 hostfix
