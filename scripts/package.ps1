@@ -57,4 +57,5 @@ Compress-Archive -Path $home\docker-mount\sd-webui-package\* -DestinationPath $h
 Copy-Item $home\projects\ipex-sd-docker-for-arc-gpu\scripts\install.bat -Destination $home\projects\arc-sd-all-in-one
 
 ## Package
-Compress-Archive -Path $home\projects\arc-sd-all-in-one\* -DestinationPath $home\projects\artifacts\Arc-AI绘画-安装包-v0.5.0.zip
+# Compress-Archive not working.. Use 7-zip manually.
+# Compress-Archive -Path $home\projects\arc-sd-all-in-one\* -DestinationPath $home\projects\artifacts\Arc-AI绘画-安装包-v0.5.0.zip
