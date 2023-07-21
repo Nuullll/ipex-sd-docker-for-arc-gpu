@@ -6,13 +6,13 @@ chcp 65001 >NUL
 ::Lanuage selection
 :LANG_SEL
 cls
-echo !delim!
+echo %delim%
 echo 请选择此安装脚本的语言:
 echo Please select the lanuage for this installation script:
-echo !delim!
+echo %delim%
 echo [1] 简体中文
 echo [2] English
-echo !delim!
+echo %delim%
 echo.
 set /p LANG=输入1或2, 然后按回车 (Type 1 or 2 then press ENTER): 
 if "!LANG!" == "" set LANG=1
@@ -20,11 +20,12 @@ if not "!LANG!" == "1" if not "!LANG!" == "2" goto :LANG_SEL
 
 ::Check System status
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在检测系统环境 ..." , "Checking system environment ..."
 
+wmic path win32_VideoController get name | findstr "Arc"
 wmic path win32_VideoController get name | findstr "UHD" >NUL
-if !ERRORLEVEL! EQU 0 call :PrintRed "核显独显同时打开可能在运行Stable Diffusion时引起错误  建议在设备管理器或BIOS中禁用核显!" , "iGPU + dGPU combination may cause errors when running Stable Diffusion. Suggest to disable iGPU in device manager or BIOS"
+if %ERRORLEVEL% EQU 0 call :PrintRed "核显独显同时打开可能在运行Stable Diffusion时引起错误  建议在设备管理器或BIOS中禁用核显!" , "iGPU + dGPU combination may cause errors when running Stable Diffusion. Suggest to disable iGPU in device manager or BIOS"
 
 ::Get total RAM size
 set /a UNIT_MB=1024*1024
@@ -41,7 +42,7 @@ set /a WSL_RAM=TOTAL_RAM_MB/2
 call :Print "WSL的默认内存限制为系统物理内存[!TOTAL_RAM_MB! MB]的一半[!WSL_RAM! MB]" , "Default memory limit for WSL is half [!WSL_RAM! MB] of the total physical RAM size [!TOTAL_RAM_MB! MB]"
 ::Check minimum WSL RAM requirement
 set /a WSL_RAM_REQ=14000
-set WSL_CONFIG=!UserProfile!\.wslconfig
+set WSL_CONFIG=%USERPROFILE%\.wslconfig
 if !WSL_RAM! LEQ !WSL_RAM_REQ! (
     call :PrintRed "WSL的默认内存限制太低. 可能无法正常运行Stable Diffusion Web UI." , "Default memory limit for WSL is too low to run Stable Diffusion Web UI."
     if !TOTAL_RAM_MB! LSS !WSL_RAM_REQ! (
@@ -88,7 +89,7 @@ pause >NUL
 ::Install Docker Desktop
 :CHECK_DD
 echo.
-echo !delim!
+echo %delim%
 call :PrintRed "是否要自动安装/更新Docker Desktop?" , "Do you want to install/upgrade Docker Desktop automatically?"
 set /p INSTALL_DD=输入y或N, 然后按回车 (Type y or N then press ENTER): 
 if "!INSTALL_DD!" == "n" goto :LAUNCH_DD
@@ -98,20 +99,20 @@ call :Print "正在检查Docker Desktop环境 ..." , "Checking Docker Desktop en
 
 winget install docker.dockerdesktop
 echo.
-if !ERRORLEVEL! EQU 0 (
+if %ERRORLEVEL% EQU 0 (
     call :PrintGreen "成功安装Docker Desktop" , "Installed Docker Desktop successfully"
     call :PrintRed "请重启系统后重新执行此脚本" , "Please re-execute this script after REBOOTing your system"
     call :PrintRed "按任意键退出脚本" , "Press any key to exit"
     pause >NUL
     exit
-) else if !ERRORLEVEL! EQU -1978335189 (
+) else if %ERRORLEVEL% EQU -1978335189 (
     call :PrintGreen "Docker Desktop已是最新版" , "Docker Desktop is up-to-date"
 )
 
 ::Launch Docker Desktop
 :LAUNCH_DD
 echo.
-echo !delim!
+echo %delim%
 set dd_exe=C:\Program Files\Docker\Docker\Docker Desktop.exe
 call :Print "正在启动Docker Desktop ..." , "Launching Docker Desktop ..."
 if exist "!dd_exe!" (
@@ -124,7 +125,7 @@ pause >NUL
 
 ::Check docker daemon status
 docker image ls 2>&1 | findstr "error during connect" >NUL
-if !ERRORLEVEL! EQU 0 (
+if %ERRORLEVEL% EQU 0 (
     call :PrintRed "Docker服务未启动. 请等待Docker Desktop完全启动后再继续" , "Docker daemon is not running. Please wait until Docker Desktop is fully launched."
     goto :LAUNCH_DD
 )
@@ -132,19 +133,19 @@ if !ERRORLEVEL! EQU 0 (
 ::Import image
 ::Will automatically skip if the image 'nuullll/ipex-arc-sd:latest' already exists
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在从image.tar导入nuullll/ipex-arc-sd镜像 ..." , "Importing docker image: nuullll/ipex-arc-sd from image.tar ..."
 docker load --input image.tar
 call :PrintGreen "成功导入镜像" , "Successfully imported the image"
 
 ::Import volumes
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在导入数据卷 ..." , "Importing volumes ..."
 
 ::Check existence first
 docker volume ls -f name=deps -f name=huggingface | findstr "local" >NUL
-if !ERRORLEVEL! EQU 0 (
+if %ERRORLEVEL% EQU 0 (
     call :PrintRed "警告: 本地数据卷 deps, huggingface 已存在" , "WARNING: local volumes deps, huggingface already exist, the content would be overwritten"
     call :PrintRed "是否要覆盖本地数据卷?" , "Do you want to overwrite local volumes?"
     set /p OVERWRITE_VOLUME=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
@@ -165,15 +166,15 @@ call :PrintGreen "成功导入数据卷" , "Successfully imported volumes"
 ::Setup Web UI folder
 :WEBUI
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在解压Web UI目录 ..." , "Extracting Web UI folder ..."
 call :PrintRed "想把Web UI目录安装到哪里? [用于放置Web UI源代码, 模型文件, 输出图片等]" , "Where do you want to install Stable Diffusion Web UI [to place the Web UI source code, models, outputs, etc]?"
-call :PrintGreen "默认路径为 !UserProfile!\docker-mount\sd-webui" , "Default path !UserProfile!\docker-mount\sd-webui"
+call :PrintGreen "默认路径为 %USERPROFILE%\docker-mount\sd-webui" , "Default path %USERPROFILE%\docker-mount\sd-webui"
 call :PrintRed "请勿输入带空格的路径" , "Don't use path with spaces"
 set /p loc=输入安装路径 (Input install path): 
-if "!loc!" == "" set loc=!UserProfile!\docker-mount\sd-webui
+if "!loc!" == "" set loc=%USERPROFILE%\docker-mount\sd-webui
 echo !loc! | findstr : >NUL
-if not !ERRORLEVEL! EQU 0 (
+if not %ERRORLEVEL% EQU 0 (
     call :PrintRed "请输入正确的绝对路径. 例如 D:\ARC-AI" , "Please specify a correct absolute path. For example D:\ARC-AI"
     goto :WEBUI
 )
@@ -183,33 +184,77 @@ if exist !loc! (
     call :PrintRed "警告: 指定路径已存在 !loc!", "WARNING: Specified path already exists !loc!"
     call :PrintRed "是否要用解压的文件覆盖原有同名文件?" , "Do you want to overwrite conflicting files?"
     set /p FORCE_EXTRACT=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
-    if "!FORCE_EXTRACT!" == "n" goto :WEBUI
-    if "!FORCE_EXTRACT!" == "N" goto :WEBUI
+    if "!FORCE_EXTRACT!" == "n" goto :CONFIRM
+    if "!FORCE_EXTRACT!" == "N" goto :CONFIRM
+    goto :EXTRACT
 )
+
+:CONFIRM
+call :PrintRed "是否要跳过Web UI解压 [输入N重新选择解压路径]" , "Skip extracting Web UI foler [Input N to choose install path again]"
+set /p SKIP_EXTRACT=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
+if "!SKIP_EXTRACT!" == "n" goto :WEBUI
+if "!SKIP_EXTRACT!" == "N" goto :WEBUI
+goto :WARMUP
 
 :EXTRACT
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在将Web UI解压至 !loc!" , "Extracting Web UI to !loc!"
 powershell -command "Expand-Archive -Path !cd!\webui.zip -DestinationPath !loc! -Force"
 echo.
 call :PrintGreen "解压成功: !loc!" , "Extracted to: !loc!"
 
 echo.
-echo !delim!
+echo %delim%
 call :PrintGreen "现在你可以把模型文件手动复制到 !loc! 目录下相应位置了 [比如 !loc!\models\Stable-diffusion]" , "Now you can manually copy your model files into corresponding locations under !loc! [e.g. !loc!\models\Stable-diffusion]"
 call :Print "按回车继续" , "Press ENTER to continue"
 pause >NUL
+
+::Warmup Web UI
+:WARMUP
+echo.
+echo %delim%
+call :Print "正在初始化Web UI ..." , "Initializing Web UI ..."
+
+for /f "tokens=*" %%g in ('docker run -d ^
+--device /dev/dxg ^
+-v /usr/lib/wsl:/usr/lib/wsl ^
+-v !loc!:/sd-webui ^
+-v deps:/deps ^
+-v huggingface:/root/.cache/huggingface ^
+-p 7860:7860 ^
+--rm ^
+nuullll/ipex-arc-sd:latest ^
+--skip-git --no-download --no-hashing') do (set container_id=%%g)
+
+set /a i=0
+:WARMUP_CHECK
+findstr "Startup time" "!loc!\sdnext.log" >NUL 2>NUL
+if %ERRORLEVEL% EQU 0 (
+    docker stop !container_id! >NUL
+    call :PrintGreen "初始化成功" , "Initialized successfully"
+    goto :WARMUP_DONE
+)
+timeout /t 10 /nobreak >NUL
+set /a i=i+10
+if !i! GEQ 120 (
+    docker stop !container_id! >NUL
+    call :PrintRed "警告: Web UI初始化超时 [120秒]" , "WARNING: Web UI initialization timeout [120s]"
+    call :PrintRed "请查看日志 !loc!\sdnext.log" , "Please check the log !loc!\sdnext.log"
+    goto :WARMUP_DONE
+)
+goto :WARMUP_CHECK
+:WARMUP_DONE
 
 ::Launch Web UI for the first time
 set container_name=sd-server
 :LAUNCH_WEBUI
 echo.
-echo !delim!
+echo %delim%
 call :Print "正在创建容器: !container_name! ..." , "Creating container: !container_name! ..."
 ::Check name first
-docker container ls -a -f name=!container_name! | findstr "!container_name!"
-if !ERRORLEVEL! EQU 0 (
+docker container ls -a -f name=!container_name! | findstr "!container_name!">NUL
+if %ERRORLEVEL% EQU 0 (
     call :PrintRed "已有其他容器占用了'!container_name!'这个名字" , "The name '!container_name!' is used by the other container"
     set /p container_name=请指定一个新名字 ^(Please specify a new name^): 
     if "!container_name!" == "sd-server" set container_name=new-sd-server
@@ -225,7 +270,8 @@ docker run -it ^
 -v huggingface:/root/.cache/huggingface ^
 -p 7860:7860 ^
 --name !container_name! ^
-nuullll/ipex-arc-sd:latest
+nuullll/ipex-arc-sd:latest ^
+--insecure --skip-git --no-download
 exit
 
 :Print
