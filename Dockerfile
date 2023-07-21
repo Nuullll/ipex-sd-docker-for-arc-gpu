@@ -138,3 +138,4 @@ ENV ClDeviceGlobalMemSizeAvailablePercent=100
 WORKDIR /sd-webui
 
 ENTRYPOINT [ "startup.sh", "-f", "--use-ipex", "--listen" ]
+CMD [ "--insecure", "--skip-git" ]
