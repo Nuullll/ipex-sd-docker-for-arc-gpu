@@ -167,8 +167,8 @@ call :PrintGreen "成功导入数据卷" , "Successfully imported volumes"
 :WEBUI
 echo.
 echo %delim%
-call :Print "正在解压Web UI目录 ..." , "Extracting Web UI folder ..."
-call :PrintRed "想把Web UI目录安装到哪里? [用于放置Web UI源代码, 模型文件, 输出图片等]" , "Where do you want to install Stable Diffusion Web UI [to place the Web UI source code, models, outputs, etc]?"
+call :Print "正在复制Web UI目录 ..." , "Copying Web UI folder ..."
+call :PrintRed "想把Web UI目录安装到哪里? [用于放置Web UI源代码 模型文件 输出图片等]" , "Where do you want to install Stable Diffusion Web UI [to place the Web UI source code | models | outputs etc]?"
 call :PrintGreen "默认路径为 %USERPROFILE%\docker-mount\sd-webui" , "Default path %USERPROFILE%\docker-mount\sd-webui"
 call :PrintRed "请勿输入带空格的路径" , "Don't use path with spaces"
 set /p loc=输入安装路径 (Input install path): 
@@ -182,12 +182,12 @@ if not %ERRORLEVEL% EQU 0 (
 ::Check folder status
 if exist !loc! (
     call :PrintRed "警告: 指定路径已存在 !loc!", "WARNING: Specified path already exists !loc!"
-    call :PrintRed "是否要用解压的文件覆盖原有同名文件?" , "Do you want to overwrite conflicting files?"
+    call :PrintRed "是否要用新文件覆盖原有同名文件?" , "Do you want to overwrite conflicting files?"
     set /p FORCE_EXTRACT=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
     if "!FORCE_EXTRACT!" == "n" goto :CONFIRM
     if "!FORCE_EXTRACT!" == "N" goto :CONFIRM
-    goto :EXTRACT
 )
+goto :EXTRACT
 
 :CONFIRM
 call :PrintRed "是否要跳过Web UI解压 [输入N重新选择解压路径]" , "Skip extracting Web UI foler [Input N to choose install path again]"
@@ -199,10 +199,10 @@ goto :WARMUP
 :EXTRACT
 echo.
 echo %delim%
-call :Print "正在将Web UI解压至 !loc!" , "Extracting Web UI to !loc!"
-powershell -command "Expand-Archive -Path !cd!\webui.zip -DestinationPath !loc! -Force"
+call :Print "正在将Web UI复制至 !loc!" , "Copying Web UI to !loc!"
+robocopy %cd%\webui !loc! /e /mt /z
 echo.
-call :PrintGreen "解压成功: !loc!" , "Extracted to: !loc!"
+call :PrintGreen "复制成功: !loc!" , "Copied to: !loc!"
 
 echo.
 echo %delim%
@@ -214,7 +214,7 @@ pause >NUL
 :WARMUP
 echo.
 echo %delim%
-call :Print "正在初始化Web UI ..." , "Initializing Web UI ..."
+call :Print "正在初始化Web UI ... 可能需要几分钟" , "Initializing Web UI ... may take several minutes"
 
 for /f "tokens=*" %%g in ('docker run -d ^
 --device /dev/dxg ^
