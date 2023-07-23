@@ -3,6 +3,8 @@ setlocal enableextensions enabledelayedexpansion
 chcp 65001 >NUL
 
 @set delim===================================================
+set cwd=%~dp0
+
 ::Lanuage selection
 :LANG_SEL
 cls
@@ -135,7 +137,14 @@ if %ERRORLEVEL% EQU 0 (
 echo.
 echo %delim%
 call :Print "正在从image.tar导入nuullll/ipex-arc-sd镜像 ..." , "Importing docker image: nuullll/ipex-arc-sd from image.tar ..."
-docker load --input image.tar
+docker load --input %cwd%\image.tar
+if not %ERRORLEVEL% EQU 0 (
+    call :PrintRed "导入本地镜像失败" , "Failed to import the local image"
+    call :PrintRed "请确认脚本目录 %cwd% 下是否存在image.tar文件" , "Please double check whether image.tar exists in the folder %cwd%"
+    call :Print "按任意键退出" , "Press any key to exit"
+    pause >NUL
+    exit
+)
 call :PrintGreen "成功导入镜像" , "Successfully imported the image"
 
 ::Import volumes
@@ -155,12 +164,18 @@ if %ERRORLEVEL% EQU 0 (
 
 call :Print "解压中... 可能需要几分钟" , "Extracting ... may take several minutes"
 docker run --rm ^
--v !cd!:/backup ^
+-v %cwd%:/backup ^
 -v deps:/deps ^
 -v huggingface:/root/.cache/huggingface ^
 --entrypoint bash ^
 nuullll/ipex-arc-sd:latest ^
 -c "cd /deps && tar xf /backup/volume-deps.tar --totals --strip 1 && cd /root/.cache/huggingface && tar xf /backup/volume-huggingface.tar --totals --strip 1"
+if not %ERRORLEVEL% EQU 0 (
+    call :PrintRed "导入本地数据卷失败" , "Failed to import local volumes"
+    call :Print "按任意键退出" , "Press any key to exit"
+    pause >NUL
+    exit
+)
 call :PrintGreen "成功导入数据卷" , "Successfully imported volumes"
 
 ::Setup Web UI folder
@@ -200,7 +215,7 @@ goto :WARMUP
 echo.
 echo %delim%
 call :Print "正在将Web UI复制至 !loc!" , "Copying Web UI to !loc!"
-robocopy %cd%\webui !loc! /e /mt /z
+robocopy %cwd%\webui !loc! /e /mt /z
 echo.
 call :PrintGreen "复制成功: !loc!" , "Copied to: !loc!"
 
