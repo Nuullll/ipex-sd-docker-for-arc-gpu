@@ -29,6 +29,11 @@ wmic path win32_VideoController get name | findstr "Arc"
 wmic path win32_VideoController get name | findstr "UHD" >NUL
 if %ERRORLEVEL% EQU 0 call :PrintRed "核显独显同时打开可能在运行Stable Diffusion时引起错误  建议在设备管理器或BIOS中禁用核显!" , "iGPU + dGPU combination may cause errors when running Stable Diffusion. Suggest to disable iGPU in device manager or BIOS"
 
+::Update WSL
+call :Print "正在更新WSL ..." , "Updating WSL ..."
+wsl --update
+if not %ERRORLEVEL% EQU 0 call :PrintRed "WSL更新失败 后续安装Docker Desktop可能失败!", "Failed to update WSL. Docker Desktop installation may fail"
+
 ::Get total RAM size
 set /a UNIT_MB=1024*1024
 set /a UNIT_MB1=UNIT_MB/100
@@ -43,7 +48,7 @@ set /a TOTAL_RAM_MB=TOTAL_RAM1/UNIT_MB1
 set /a WSL_RAM=TOTAL_RAM_MB/2
 call :Print "WSL的默认内存限制为系统物理内存[!TOTAL_RAM_MB! MB]的一半[!WSL_RAM! MB]" , "Default memory limit for WSL is half [!WSL_RAM! MB] of the total physical RAM size [!TOTAL_RAM_MB! MB]"
 ::Check minimum WSL RAM requirement
-set /a WSL_RAM_REQ=14000
+set /a WSL_RAM_REQ=13000
 set WSL_CONFIG=%USERPROFILE%\.wslconfig
 if !WSL_RAM! LEQ !WSL_RAM_REQ! (
     call :PrintRed "WSL的默认内存限制太低. 可能无法正常运行Stable Diffusion Web UI." , "Default memory limit for WSL is too low to run Stable Diffusion Web UI."
@@ -140,7 +145,7 @@ call :Print "正在从image.tar导入nuullll/ipex-arc-sd镜像 ..." , "Importing
 docker load --input %cwd%\image.tar
 if not %ERRORLEVEL% EQU 0 (
     call :PrintRed "导入本地镜像失败" , "Failed to import the local image"
-    call :PrintRed "请确认脚本目录 %cwd% 下是否存在image.tar文件" , "Please double check whether image.tar exists in the folder %cwd%"
+    call :PrintRed "请确认脚本路径 %cwd% 不包含空格!" , "Please make sure there's no 'space' character in path %cwd%"
     call :Print "按任意键退出" , "Press any key to exit"
     pause >NUL
     exit
@@ -216,12 +221,14 @@ echo.
 echo %delim%
 call :Print "正在将Web UI复制至 !loc!" , "Copying Web UI to !loc!"
 robocopy %cwd%\webui !loc! /e /mt /z
+robocopy %cwd%\webui-plugins !loc! /e /mt /z
+robocopy %cwd%\webui-models !loc! /e /mt /z
 echo.
 call :PrintGreen "复制成功: !loc!" , "Copied to: !loc!"
 
 echo.
 echo %delim%
-call :PrintGreen "现在你可以把模型文件手动复制到 !loc! 目录下相应位置了 [比如 !loc!\models\Stable-diffusion]" , "Now you can manually copy your model files into corresponding locations under !loc! [e.g. !loc!\models\Stable-diffusion]"
+call :PrintGreen "现在请把你自己下载的SD大模型文件手动复制到 !loc!\models\Stable-diffusion" , "Now you can manually copy your model files into corresponding locations under !loc! [e.g. !loc!\models\Stable-diffusion]"
 call :Print "按回车继续" , "Press ENTER to continue"
 pause >NUL
 
@@ -268,7 +275,7 @@ echo.
 echo %delim%
 call :Print "正在创建容器: !container_name! ..." , "Creating container: !container_name! ..."
 ::Check name first
-docker container ls -a -f name=!container_name! | findstr "!container_name!">NUL
+docker container ls -a -f name=!container_name! | more | findstr /rc:" !container_name!$">NUL
 if %ERRORLEVEL% EQU 0 (
     call :PrintRed "已有其他容器占用了'!container_name!'这个名字" , "The name '!container_name!' is used by the other container"
     set /p container_name=请指定一个新名字 ^(Please specify a new name^): 

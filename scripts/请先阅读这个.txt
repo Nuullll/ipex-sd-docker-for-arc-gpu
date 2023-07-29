@@ -1,0 +1,62 @@
+# AI绘画 Intel Arc -- Windows一键安装包
+
+- 安装包版本: v0.5.3
+- SD.Next版本: 42c6147a
+- 镜像版本: v0.5
+- oneAPI版本: 2023.1
+- IPEX版本: 1.13.120
+- 作者: Nuullll
+- GitHub: https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu
+- bilibili: https://space.bilibili.com/18233791
+- QQ交流群: 558074047
+
+## 更新日志
+
+- 修复安装脚本
+- 支持ControlNet depth_leres, depth_leres++
+- 支持Adetailer
+- 支持Tiled VAE
+-- (已安装旧版的用户可以直接将webui/目录下的内容复制到你安装Web UI的路径下, 但设置可能会被覆盖)
+
+## 使用方法
+
+将Arc-AI绘画-安装包.zip解压到任意位置, 然后双击install.bat (Windows批处理文件) 开始安装.
+安装过程中请根据提示以及系统环境做相应选择.
+
+## 会自动安装哪些东西?
+
+1. WSL 和 Docker Desktop (需要网络连接)
+如果你已经安装过, 可以选择跳过.
+
+2. ipex-arc-sd Docker镜像 v0.5 (离线解压)
+本镜像基于WSL2的Ubuntu系统, 可以直接在Windows系统中运行.
+镜像中集成了在Intel Arc上运行Stable Diffusion Web UI所需要的oneAPI环境.
+** 使用的SD Web UI为 SD.Next: https://github.com/vladmandic/automatic **
+
+3. Docker镜像需要挂载的数据卷 (离线解压)
+数据卷中主要包含运行SD.Next所必需的python依赖包, 包括Intel Extension for PyTorch (IPEX)等.
+
+4. 打包的SD.Next源代码 (离线解压)
+除了SD.Next本身自带的内置插件, 作者还额外打包了:
+-- 中英双语对照插件
+-- 提示词大礼包(prompt-all-in-one)插件
+-- tag自动补全(tagcomplete)插件
+-- Adetailer, Ultimate upscaler
+-- 常用功能需要的体积较小的模型 (SD大模型等烦请自行下载):
+---- CLIP ViT-L-14.pt
+---- codeformer-v0.1.0.pth
+---- ESRGAN_4x.pth
+---- LDSR model.ckpt
+---- RealESRGAN_x4plus.pth RealESRGAN_x4plus_anime_6B.pth
+---- ScuNet.pth
+---- SwinIR_4x.pth
+---- torch_deepdanbooru model-resnet_custom_v3.pt
+
+## 其他
+如果安装遇到问题, 欢迎联系作者 (Q群, GitHub, bilibili).
+安装脚本install.bat以及作者使用的打包脚本已开源: https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu/tree/main/scripts
+
+关于此镜像的高阶用法, 请移步进阶教程: https://blog.nuullll.com/ipex-sd-docker-for-arc-gpu/#/zh-cn/
+
+## 声明
+此一键安装包仅为了简化Intel Arc运行AI绘画应用的环境配置. 请勿用于不正当用途.
