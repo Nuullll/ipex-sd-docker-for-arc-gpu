@@ -29,23 +29,16 @@ RUN no_proxy=$no_proxy wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-P
    echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
    | tee /etc/apt/sources.list.d/oneAPI.list
 
-ARG DPCPP_VER=2023.1.0-46305
-ARG MKL_VER=2023.1.0-46342
+ARG DPCPP_VER=2023.2.1-16
+ARG MKL_VER=2023.2.0-49495
 # intel-oneapi-compiler-shared-common provides `sycl-ls`
-ARG CMPLR_COMMON_VER=2023.1.0
+ARG CMPLR_COMMON_VER=2023.2.1
 # Install runtime libs to reduce image size
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --fix-missing \
     intel-oneapi-runtime-dpcpp-cpp=${DPCPP_VER} \
     intel-oneapi-runtime-mkl=${MKL_VER} \
-    intel-oneapi-compiler-shared-common-${CMPLR_COMMON_VER}
-
-# oneAPI 2023.1 hostfix
-RUN no_proxy=$no_proxy wget http://registrationcenter-download.intel.com/akdlm/IRC_NAS/89283df8-c667-47b0-b7e1-c4573e37bd3e/2023.1-linux-hotfix.zip && \
-    unzip 2023.1-linux-hotfix.zip && \
-    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/oneapi/lib/libpi_level_zero.so && \
-    cp 2023.1-linux-hotfix/libpi_level_zero.so /opt/intel/opencl/libpi_level_zero.so && \
-    rm -rf 2023.1-linux-hotfix.zip 2023.1-linux-hotfix/
+    intel-oneapi-compiler-shared-common-${CMPLR_COMMON_VER}=${DPCPP_VER}
 
 # Prepare Intel Graphics driver index
 ARG DEVICE=flex
@@ -59,7 +52,7 @@ FROM ubuntu:${UBUNTU_VERSION}
 
 RUN mkdir /oneapi-lib
 COPY --from=oneapi-lib-installer /opt/intel/oneapi/lib /oneapi-lib/
-ARG CMPLR_COMMON_VER=2023.1.0
+ARG CMPLR_COMMON_VER=2023.2.1
 COPY --from=oneapi-lib-installer /opt/intel/oneapi/compiler/${CMPLR_COMMON_VER}/linux/bin/sycl-ls /bin/
 COPY --from=oneapi-lib-installer /usr/share/keyrings/intel-graphics.gpg /usr/share/keyrings/intel-graphics.gpg
 COPY --from=oneapi-lib-installer /etc/apt/sources.list.d/intel.gpu.jammy.list /etc/apt/sources.list.d/intel.gpu.jammy.list
@@ -88,8 +81,8 @@ RUN ln -sf $(which ${PYTHON}) /usr/local/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python && \
     ln -sf $(which ${PYTHON}) /usr/bin/python3
 
-ARG ICD_VER=23.17.26241.21-647~22.04
-ARG LEVEL_ZERO_GPU_VER=1.3.26241.21-647~22.04
+ARG ICD_VER=23.17.26241.33-647~22.04
+ARG LEVEL_ZERO_GPU_VER=1.3.26241.33-647~22.04
 ARG LEVEL_ZERO_VER=1.11.0-647~22.04
 ARG LEVEL_ZERO_DEV_VER=1.11.0-647~22.04
 RUN apt-get update && \
@@ -132,4 +125,4 @@ ENV ClDeviceGlobalMemSizeAvailablePercent=100
 WORKDIR /sd-webui
 
 ENTRYPOINT [ "startup.sh", "-f", "--use-ipex", "--listen" ]
-CMD [ "--insecure", "--skip-git" ]
+CMD [ "--insecure" ]
