@@ -1,10 +1,10 @@
 # AI绘画 Intel Arc -- Windows一键安装包
 
-- 安装包版本: v0.5.3
-- SD.Next版本: 42c6147a
-- 镜像版本: v0.5
-- oneAPI版本: 2023.1
-- IPEX版本: 1.13.120
+- 安装包版本: v0.6.0
+- SD.Next版本: 417ef540
+- 镜像版本: v0.6
+- oneAPI版本: 2023.2
+- IPEX版本: 2.0.110
 - 作者: Nuullll
 - GitHub: https://github.com/Nuullll/ipex-sd-docker-for-arc-gpu
 - bilibili: https://space.bilibili.com/18233791
@@ -13,10 +13,9 @@
 ## 更新日志
 
 - 修复安装脚本
-- 支持ControlNet depth_leres, depth_leres++
-- 支持Adetailer
-- 支持Tiled VAE
--- (已安装旧版的用户可以直接将webui/目录下的内容复制到你安装Web UI的路径下, 但设置可能会被覆盖)
+- 升级oneAPI至2023.2
+- 升级IPEX至2.0.110
+-- (已安装旧版的用户请务必在docker desktop中删除已有container和deps volume后重新安装)
 
 ## 使用方法
 
@@ -28,7 +27,7 @@
 1. WSL 和 Docker Desktop (需要网络连接)
 如果你已经安装过, 可以选择跳过.
 
-2. ipex-arc-sd Docker镜像 v0.5 (离线解压)
+2. ipex-arc-sd Docker镜像 v0.6 (离线解压)
 本镜像基于WSL2的Ubuntu系统, 可以直接在Windows系统中运行.
 镜像中集成了在Intel Arc上运行Stable Diffusion Web UI所需要的oneAPI环境.
 ** 使用的SD Web UI为 SD.Next: https://github.com/vladmandic/automatic **

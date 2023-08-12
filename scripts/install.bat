@@ -165,6 +165,7 @@ if %ERRORLEVEL% EQU 0 (
     set /p OVERWRITE_VOLUME=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
     if "!OVERWRITE_VOLUME!" == "n" goto :WEBUI
     if "!OVERWRITE_VOLUME!" == "N" goto :WEBUI
+    docker volume rm deps -f >NUL
 )
 
 call :Print "解压中... 可能需要几分钟" , "Extracting ... may take several minutes"

@@ -21,8 +21,12 @@ args = parser.parse_args()
 MANUAL_CHECKS = [
     'localization file',
     'UI vae',
+    'UI extra networks inline',
     'UI theme',
     'image process exact steps',
+    'remove local wheels',
+    'samplers',
+    'webui-user.sh',
 ]
 
 def run(cmd):
@@ -59,6 +63,7 @@ def launch_fresh_webui():
          '-v', 'deps:/deps',
          '-v', 'huggingface:/root/.cache/huggingface',
          '-p', '7866:7860',
+         '-e', 'TORCH_COMMAND=intel_extension_for_pytorch-2.0.110+xpu-cp310-cp310-linux_x86_64.whl torch-2.0.1a0+cxx11.abi-cp310-cp310-linux_x86_64.whl torchvision-0.15.2a0+cxx11.abi-cp310-cp310-linux_x86_64.whl',
          '--rm',
          'nuullll/ipex-arc-sd:latest',
          '--upgrade', '--no-download'])
@@ -117,7 +122,7 @@ def get_dir_size(dir):
 def copy_models():
     # models
     model_dir = os.path.join(args.webui_dir_with_models, 'models')
-    exclude_dirs = ['Lora', 'LyCORIS', 'embeddings', 'Stable-diffusion']
+    exclude_dirs = ['Lora', 'LyCORIS', 'Stable-diffusion']
     basic_model_output = os.path.join(args.output_dir, 'webui-models')
     shutil.copytree(model_dir, os.path.join(basic_model_output, 'models'), ignore=shutil.ignore_patterns(*exclude_dirs))
     logging.info(f"Copied basic models: {get_dir_size(basic_model_output)} GB")
@@ -142,6 +147,7 @@ def manual_check():
     par_dir = os.path.dirname(args.webui_dir)
     basename = os.path.basename(args.webui_dir)
     ws = os.path.join(par_dir, basename + '-plugins')
+    os.remove(os.path.join(ws, 'sdnext.log'))
     run(['docker', 'run', '-d',
          '--device', '/dev/dxg',
          '-v', '/usr/lib/wsl:/usr/lib/wsl',
@@ -151,7 +157,7 @@ def manual_check():
          '-p', '7866:7860',
          '--rm',
          'nuullll/ipex-arc-sd:latest',
-         '--insecure', '--skip-git', '--no-download'])
+         '--insecure', '--no-download'])
     for item in MANUAL_CHECKS:
         input(f"Check item {item}")
 
