@@ -1,6 +1,44 @@
 # 更新日志
 
-## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore) （最新）
+## [v0.6](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.6/images/sha256-30bdf186bc21abbcbb1d59ee87b4a726af9aa93794543121caf58ba95f44caaa?context=explore) (最新)
+
+压缩后镜像大小：845.44 MB
+
+主要变动：
+
+- oneAPI版本升级至2023.2，支持IPEX XPU 2.0
+
+镜像（基于Ubuntu 22.04）中包含：
+
+- Intel oneAPI DPC++运行时库 (2023.2.1) （注：不包含编译器可执行文件）
+- Intel oneAPI MKL运行时库 (2023.2.0)
+- Intel oneAPI 编译器通用工具sycl-ls (2023.2.1)
+- Intel显卡驱动 (1.3.26241.33-647~22.04)
+- 基础python环境 (3.10.6)
+
+在Windows 11 22H2 22621.1848 + i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)环境下测试通过。
+
+## [v0.5](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.5/images/sha256-bb556a04a3ad6d331582ad1d64e79a123650fd43981d2bdd3c2e1f639bde818c?context=explore)
+
+压缩后镜像大小：831.44 MB
+
+Major changes:
+
+- Allow extension installation by default (`--insecure`)
+- Skip startup git operations by default (`--skip-git`)
+- Use faster offline git repo check
+
+镜像（基于Ubuntu 22.04）中包含：
+
+- Intel oneAPI DPC++运行时库 (2023.1) （注：不包含编译器可执行文件）
+- Intel oneAPI MKL运行时库 (2023.1)
+- Intel oneAPI 编译器通用工具sycl-ls (2023.1)
+- Intel显卡驱动 (1.3.26241.21-647~22.04)
+- 基础python环境 (3.10.6)
+
+在Windows 11 22H2 22621.1848 + i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)环境下测试通过。
+
+## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore)
 
 压缩后镜像大小：831.25 MB
 

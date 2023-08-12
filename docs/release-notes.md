@@ -1,6 +1,44 @@
 # Release Notes
 
-## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore) (latest)
+## [v0.6](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.6/images/sha256-30bdf186bc21abbcbb1d59ee87b4a726af9aa93794543121caf58ba95f44caaa?context=explore) (latest)
+
+Compressed image size: 845.44 MB
+
+Major changes:
+
+- Uplift oneAPI to 2023.2 to support IPEX XPU 2.0
+
+The [image](https://hub.docker.com/r/nuullll/ipex-arc-sd) (Ubuntu 22.04 based) includes:
+
+- Intel oneAPI DPC++ runtime libs (2023.2.1) (Note: compiler executables are not included)
+- Intel oneAPI MKL runtime libs (2023.2.0)
+- Intel oneAPI compiler common tool sycl-ls (2023.2.1)
+- Intel Graphics driver (1.3.26241.33-647~22.04)
+- Basic python environment (3.10.6)
+
+Tested on Windows 11 22H2 22621.1848 with i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)
+
+## [v0.5](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.5/images/sha256-bb556a04a3ad6d331582ad1d64e79a123650fd43981d2bdd3c2e1f639bde818c?context=explore)
+
+Compressed image size: 831.44 MB
+
+Major changes:
+
+- Allow extension installation by default (`--insecure`)
+- Skip startup git operations by default (`--skip-git`)
+- Use faster offline git repo check
+
+The [image](https://hub.docker.com/r/nuullll/ipex-arc-sd) (Ubuntu 22.04 based) includes:
+
+- Intel oneAPI DPC++ runtime libs (2023.1) (Note: compiler executables are not included)
+- Intel oneAPI MKL runtime libs (2023.1)
+- Intel oneAPI compiler common tool sycl-ls (2023.1)
+- Intel Graphics driver (1.3.26241.21-647~22.04)
+- Basic python environment (3.10.6)
+
+Tested on Windows 11 22H2 22621.1848 with i9-13900 + Arc A770 (Windows driver: 31.0.101.4502)
+
+## [v0.4](https://hub.docker.com/layers/nuullll/ipex-arc-sd/v0.4/images/sha256-ca5ba4aab952e6afb3150865b33b03846cf38d1b512fbae575d3f54f7d38a829?context=explore)
 
 Compressed image size: 831.25 MB
 
