@@ -100,7 +100,7 @@ RUN apt-get update && \
     libgl1 \
     libglib2.0-0 \
     libgomp1 \
-    libgoogle-perftools-dev \
+    libjemalloc-dev \
     python3-venv \
     git \
     numactl && \
@@ -115,7 +115,7 @@ VOLUME [ "/sd-webui" ]
 VOLUME [ "/root/.cache/huggingface" ]
 
 ENV venv_dir=/deps/venv
-ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
 
 # Force 100% available VRAM size for compute-runtime
 # See https://github.com/intel/compute-runtime/issues/586
