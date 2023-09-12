@@ -268,7 +268,7 @@ goto :WARMUP_CHECK
 :WARMUP_DONE
 
 ::Launch Web UI for the first time
-set container_name=sd-server-%%IMAGE_VER%%
+set container_name=sd-server-%%CONTAINER_VER%%
 :LAUNCH_WEBUI
 echo.
 echo %delim%

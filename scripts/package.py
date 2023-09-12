@@ -62,6 +62,7 @@ def copy_install_script():
     with open(dst, 'r', encoding='utf-8') as f:
         s = f.read()
     s = s.replace('%%IMAGE_VER%%', get_image_version())
+    s = s.replace('%%CONTAINER_VER%%', args.version)
     with open(dst, 'w', encoding='utf-8') as f:
         f.write(s)
 
