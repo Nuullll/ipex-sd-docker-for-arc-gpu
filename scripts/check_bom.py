@@ -61,6 +61,9 @@ def check_config():
     if "sd_vae" not in config["quicksettings_list"]:
         logging.error("sd_vae not in quicksettings")
         ok = False
+    if "sd_model_refiner" not in config["quicksettings_list"]:
+        logging.error("sd_model_refiner not in quicksettings")
+        ok = False
     if "Euler" not in config["show_samplers"]:
         logging.error("Euler not in show_samplers")
         ok = False
@@ -82,9 +85,13 @@ def check_webui_user():
     for line in lines:
         line = line.strip()
         if line and not line.startswith('#'):
-            if line.startswith('export COMMANDLINE_ARGS=') and '--skip-git' in line and '--no-download' in line:
+            if line.startswith('export COMMANDLINE_ARGS='):
+                expected_options = ['--skip-git', '--no-download', '--ad-no-huggingface']
+                for opt in expected_options:
+                    if opt not in line:
+                        logging.error(f"Missing preset COMMANDLINE_ARGS: {opt}")
+                        return False
                 return True
-    logging.error("webui-user.sh should have: export COMMANDLINE_ARGS='--skip-git --no-download'")
     return False
 
 if __name__ == '__main__':

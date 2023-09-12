@@ -9,8 +9,15 @@ localizations/I18N_sd-webui-zh_CN.json
 webui-user.sh
 config.json
 
+# original configs
+configs/v1-inference.yaml
+configs/v2-inference-v.yaml
+configs/sd_xl_base.yaml
+configs/sd_xl_refiner.yaml
+
 # clip configs
 openai/clip-vit-large-patch14/* 7
+laion/CLIP-ViT-bigG-14-laion2B-39B-b160k/* 9
 
 # models
 ## adetailer models
