@@ -158,24 +158,24 @@ echo %delim%
 call :Print "正在导入数据卷 ..." , "Importing volumes ..."
 
 ::Check existence first
-docker volume ls -f name=deps -f name=huggingface | findstr "local" >NUL
+docker volume ls -f name=deps-%%IMAGE_VER%% | findstr "local" >NUL
 if %ERRORLEVEL% EQU 0 (
-    call :PrintRed "警告: 本地数据卷 deps, huggingface 已存在" , "WARNING: local volumes deps, huggingface already exist, the content would be overwritten"
+    call :PrintRed "警告: 本地数据卷 deps-%%IMAGE_VER%% 已存在" , "WARNING: local volumes deps-%%IMAGE_VER%% already exist, the content would be overwritten"
     call :PrintRed "是否要覆盖本地数据卷?" , "Do you want to overwrite local volumes?"
     set /p OVERWRITE_VOLUME=输入y或N, 然后按回车 ^(Type y or N then press ENTER^): 
     if "!OVERWRITE_VOLUME!" == "n" goto :WEBUI
     if "!OVERWRITE_VOLUME!" == "N" goto :WEBUI
-    docker volume rm deps -f >NUL
+    docker volume rm deps-%%IMAGE_VER%% -f >NUL
 )
 
 call :Print "解压中... 可能需要几分钟" , "Extracting ... may take several minutes"
 docker run --rm ^
 -v %cwd%:/backup ^
--v deps:/deps ^
+-v deps-%%IMAGE_VER%%:/deps ^
 -v huggingface:/root/.cache/huggingface ^
 --entrypoint bash ^
-nuullll/ipex-arc-sd:latest ^
--c "cd /deps && tar xf /backup/volume-deps.tar --totals --strip 1 && cd /root/.cache/huggingface && tar xf /backup/volume-huggingface.tar --totals --strip 1"
+nuullll/ipex-arc-sd:v%%IMAGE_VER%% ^
+-c "cd /deps && tar xf /backup/volume-deps.tar --totals --strip 1 && cd /root/.cache/huggingface && tar xf /backup/volume-huggingface.tar --totals --strip 3"
 if not %ERRORLEVEL% EQU 0 (
     call :PrintRed "导入本地数据卷失败" , "Failed to import local volumes"
     call :Print "按任意键退出" , "Press any key to exit"
@@ -222,8 +222,6 @@ echo.
 echo %delim%
 call :Print "正在将Web UI复制至 !loc!" , "Copying Web UI to !loc!"
 robocopy %cwd%\webui !loc! /e /mt /z
-robocopy %cwd%\webui-plugins !loc! /e /mt /z
-robocopy %cwd%\webui-models !loc! /e /mt /z
 echo.
 call :PrintGreen "复制成功: !loc!" , "Copied to: !loc!"
 
@@ -243,12 +241,12 @@ for /f "tokens=*" %%g in ('docker run -d ^
 --device /dev/dxg ^
 -v /usr/lib/wsl:/usr/lib/wsl ^
 -v !loc!:/sd-webui ^
--v deps:/deps ^
+-v deps-%%IMAGE_VER%%:/deps ^
 -v huggingface:/root/.cache/huggingface ^
 -p 7860:7860 ^
 --rm ^
-nuullll/ipex-arc-sd:latest ^
---skip-git --no-download --no-hashing') do (set container_id=%%g)
+nuullll/ipex-arc-sd:v%%IMAGE_VER%% ^
+--no-hashing') do (set container_id=%%g)
 
 set /a i=0
 :WARMUP_CHECK
@@ -270,7 +268,7 @@ goto :WARMUP_CHECK
 :WARMUP_DONE
 
 ::Launch Web UI for the first time
-set container_name=sd-server
+set container_name=sd-server-%%IMAGE_VER%%
 :LAUNCH_WEBUI
 echo.
 echo %delim%
@@ -289,12 +287,11 @@ docker run -it ^
 --device /dev/dxg ^
 -v /usr/lib/wsl:/usr/lib/wsl ^
 -v !loc!:/sd-webui ^
--v deps:/deps ^
+-v deps-%%IMAGE_VER%%:/deps ^
 -v huggingface:/root/.cache/huggingface ^
 -p 7860:7860 ^
 --name !container_name! ^
-nuullll/ipex-arc-sd:latest ^
---insecure --skip-git --no-download
+nuullll/ipex-arc-sd:v%%IMAGE_VER%%
 exit
 
 :Print

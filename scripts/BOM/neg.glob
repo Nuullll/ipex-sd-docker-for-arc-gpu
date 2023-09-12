@@ -1,0 +1,10 @@
+*.whl
+*.log
+__pycache__
+*.lock
+cache
+venv
+outputs
+
+# Large models
+models/Stable-diffusion/*

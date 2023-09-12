@@ -1,8 +1,8 @@
 # AI绘画 Intel Arc -- Windows一键安装包
 
-- 安装包版本: v0.6.0
-- SD.Next版本: 417ef540
-- 镜像版本: v0.6
+- 安装包版本: v0.7.0
+- SD.Next版本: c98a4ddb
+- 镜像版本: v0.7
 - oneAPI版本: 2023.2
 - IPEX版本: 2.0.110
 - 作者: Nuullll
@@ -12,10 +12,8 @@
 
 ## 更新日志
 
-- 修复安装脚本
-- 升级oneAPI至2023.2
-- 升级IPEX至2.0.110
--- (已安装旧版的用户请务必在docker desktop中删除已有container和deps volume后重新安装)
+- 优化docker内存管理
+- SD.Next SDXL支持(diffusers)
 
 ## 使用方法
 

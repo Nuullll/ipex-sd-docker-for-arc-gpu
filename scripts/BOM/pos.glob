@@ -1,0 +1,31 @@
+extensions/a1111-sd-webui-tagcomplete
+extensions/adetailer
+extensions/sd-webui-bilingual-localization
+extensions/sd-webui-prompt-all-in-one
+extensions/ultimate-upscale-for-automatic1111
+
+localizations/I18N_sd-webui-zh_CN.json
+
+webui-user.sh
+config.json
+
+# clip configs
+openai/clip-vit-large-patch14/* 7
+
+# models
+## adetailer models
+models/adetailer/*.pt 10
+
+models/CLIP/*.pt
+models/Codeformer/*.pth
+models/embeddings/* 3
+models/ESRGAN/*.pth 2
+models/karlo/*
+models/LDSR/* 2
+models/RealESRGAN/*.pth 2
+models/ScuNET/*
+models/Stable-diffusion
+models/SwinIR/*
+models/torch_deepdanbooru/*
+models/VAE/* 2
+models/VAE-approx/*
