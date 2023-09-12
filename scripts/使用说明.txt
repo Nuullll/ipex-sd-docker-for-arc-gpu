@@ -1,6 +1,6 @@
 # AI绘画 Intel Arc -- Windows一键安装包
 
-- 安装包版本: v0.7.0
+- 安装包版本: v0.7.1
 - SD.Next版本: c98a4ddb
 - 镜像版本: v0.7
 - oneAPI版本: 2023.2
@@ -12,6 +12,11 @@
 
 ## 更新日志
 
+0.7.1
+- 修复SDXL离线配置，现在Base+Refiner的基础功能可以在离线环境下运行 [AR: diffusers PR]
+- 修复Tiled VAE [AR: SD.Next PR]
+
+0.7.0
 - 优化docker内存管理
 - SD.Next SDXL支持(diffusers)
 
@@ -25,7 +30,7 @@
 1. WSL 和 Docker Desktop (需要网络连接)
 如果你已经安装过, 可以选择跳过.
 
-2. ipex-arc-sd Docker镜像 v0.6 (离线解压)
+2. ipex-arc-sd Docker镜像 v0.7 (离线解压)
 本镜像基于WSL2的Ubuntu系统, 可以直接在Windows系统中运行.
 镜像中集成了在Intel Arc上运行Stable Diffusion Web UI所需要的oneAPI环境.
 ** 使用的SD Web UI为 SD.Next: https://github.com/vladmandic/automatic **
